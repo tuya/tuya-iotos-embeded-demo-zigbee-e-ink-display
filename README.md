@@ -1,4 +1,4 @@
-# Tuya IoTOS Embedded Demo Zigbee E-ink-display
+# TuyaOS Embedded Zigbee E-Ink Display
 
 [English](./README.md) | [中文](./README_zh.md)
 
@@ -6,7 +6,7 @@
 
 ## Introduction
 
-This demo is based on [Tuya IoT Platform](https://iot.tuya.com/), Tuya Smart APP, IoTOS Zigbee MCU SDK, using Tuya Zigbee series modules quickly implement a smart E-ink-display application. The hardware part of the E-ink-display consists of 1 MCU, 1 communication module, 1 ink screen and 1 word library chip, which realizes functions such as the seat information setting and update,reservation information display, reservation information update, reservation information synchronization, low power alarm,equipment reset and other functions. In addition, the smart hula hoop also realizes the counting function of time, number of laps, and calories. Among them, the number of laps is detected by a switch-type Hall sensor. In addition,the demo also realized the screen refresh local brush and full brush. The developer can deliver the information displayed on the screen in real time through the Tuya Smart APP, such as seat number,Qr code image Settings.
+In this demo, we will show you how to build an e-ink display and make it IoT-enabled. Based on the [Tuya IoT Development Platform](https://iot.tuya.com/), we use Tuya's Zigbee module, MCU SDK, and the Smart Lift app to connect this display to the cloud. Regarding the hardware, we need one MCU, Zigbee module, e-ink display, and font library module to implement features including full and partial refresh, desk information entry and update, desk booking display and update, low battery warning, and device reset. You can sync information like desk ID and QR code with the e-ink display in real time by using the Smart Life app.
 
 <br>
 
@@ -14,14 +14,13 @@ This demo is based on [Tuya IoT Platform](https://iot.tuya.com/), Tuya Smart APP
 
 ### Set up development environment
 
-- The IDE is installed according to KEIL's official instructions.
+- Set up the IDE as per the user guide by Keil.
 
-   [MDK download](https://www.keil.com/download/product/)
+   [Download the MDK.](https://www.keil.com/download/product/)
 
-   [Install chip pack](https://www.keil.com/dd2/pack/)
+   [Install the MDK5 software packs.](https://www.keil.com/dd2/pack/)
 
-- The migration methods of the Tuya ZIGBEE MCU SDK are as follows: Modify the errors as prompted during project compilation to complete project compilation.
-
+- Port Tuya's MCU SDK and compile your project.
 
 <br>
 
@@ -29,141 +28,133 @@ This demo is based on [Tuya IoT Platform](https://iot.tuya.com/), Tuya Smart APP
 
 - Edit code
 
-   1. In `protocol.h`, specify the PID of the product you have created on the [Tuya IoT Platform](https://iot.tuya.com/).
+   1. In `protocol.h`, specify the PID of the product you created on the [Tuya IoT Development Platform](https://iot.tuya.com/).
 
       ```
-      #define PRODUCT_KEY     "xxxxxxxx"
+       #define PRODUCT_KEY     "xxxxxxxx"
       ```
 
       Change `xxxxxxxx` to the PID.
 
-- Compile and run Demo code
+- Compile code
 
-   After modifying the file according to the error prompted by SDK compilation, compile the system engineering and download the project to the hardware operation. When debugging MCU and module, you can first use doodle serial debugging assistant to debug whether the two work normally.
+   Correct the file according to the error messages, compile your project, and download code to the hardware. Then, you can use Tuya's debugging assistant to verify the serial communication between the MCU and the Zigbee module.
 
 <br>
 
 ### File introduction
-
 ```c
 ├── User
-│   ├── main.c                                            /* local time module */
-│   └── MY_ST_config.h                                     /* Hardware configuration file */
-├── system                                                 /* System File directory */
-│   ├── delay.c                                            /* delay function */
+│   ├── main.c                                             /* Entry to the main application */
+│   └── MY_ST_config.h                                     /* Hardware configuration */
+├── system                                                 /* System files */
+│   ├── delay.c                                            /* Delay function */
 │   ├── delay.h
-│   ├── EPAPER.c                                           /* electronic screen driver*/
+│   ├── EPAPER.c                                           /* E-ink display initialization */
 │   ├── EPAPER.h
-│   ├── GT5SLAD3BFA_stm32l431_keil5.lib                    /* Font chip.lib */
-│   ├── GT5SLAD3B-GTA6401.h                                /* Font chip.h */
-│   ├── IO.c                                               /* GPIO port init */
+│   ├── GT5SLAD3BFA_stm32l431_keil5.lib                    /* Static library for the font library module  */
+│   ├── GT5SLAD3B-GTA6401.h                                /* Header file of the font library module */
+│   ├── IO.c                                               /* GPIO initialization */
 │   ├── IO.h
-│   ├── key.c                                              /* KEY driver */
+│   ├── key.c                                              /* Key initialization */
 │   ├── key.h
-│   ├── picture.h                                          /* Image pixel data storage */
-│   ├── RCC.c                                              /* System Clock Configuration*/
+│   ├── picture.h                                          /* Pixel data storage */
+│   ├── RCC.c                                              /* System clock configuration */
 │   ├── RCC.h
-│   ├── SPI.c                                              /* SPI driver */
+│   ├── SPI.c                                              /* SPI initialization */
 │   ├── SPI.h
-│   ├── sys.c                                              /* System task file */                 
+│   ├── sys.c                                              /* System task files */                 
 │   ├── sys.h
-│   ├── qrcode_create.c                                 
+│   ├── qrcode_create.c                                    /* QR code components */
 │   ├── qrcode_create.h
-│   ├── tuya_qrcode_create.c                                /* tuya QRcode component */
+│   ├── tuya_qrcode_create.c                               
 │   ├── tuya_qrcode_create.h
-│   ├── USART.c                                            /* Serial Port Initialization */
+│   ├── USART.c                                            /* UART initialization */
 │   ├── USART.h
-│   ├── utf8ToUnicode.c                                    /* UTF8 to UNICODE */
+│   ├── utf8ToUnicode.c                                    /* Convert UTF-8 to Unicode */
 │   └── utf8ToUnicode.h
 ├── CJSON
-│   ├── cJSON.c                                            /* JSON configuration file */
+│   ├── cJSON.c                                            /* Configuration file in JSON */
 │   └── cJSON.h
 ├── mcu_sdk
-│   ├── mcu_api.c                                          /* Dp function data file */
+│   ├── mcu_api.c                                          /* Data point (DP) data */
 │   ├── mcu_api.h
-│   ├── protocol.c                          /* Protocol analysis and response of the receiving module when sending messages */
+│   ├── protocol.c                                         /* Protocol parsing and response to received serial data */
 │   ├── protocol.h
-│   ├── system.c                         /* Framework analysis of communication between single chip microcomputer and ZigBee */
+│   ├── system.c                                           /* Architecture for serial communication */
 │   ├── system.h
-│   └── zigbee.h                                           /* Macro definitions used in the SDK */
+│   └── zigbee.h                                           /* Macro definitions */
 ```
-
-
 
 ### Entry to application
 Entry file: `/user/main.c`
 
-+ `int main(void)` is executed to initialize Tuya IoTOS Embedded Zigbee MCU SDK. This function is executed only once.
++ `int main(void)` is executed to initialize the system project. This function is executed only once.
 + `while(1)` is used to execute the application code. It is executed in a loop.
 
-<br>
 
-### Data point (DP)
 
-|                 Peripheral Function                  | **Peripheral interface** |  **Gpio Port**   |
-| :--------------------------------------------------: | :----------------------: | :--------------: |
-| Serial port for communication between MCU and module |          USART2          |     PA2 PA3      |
-|                Print log serial port                 |          USART3          |    PB11 PB10     |
-|                    Ink screen CS                     |           SPI2           |       PB1        |
-|                   library chip CS                    |           SPI2           |       PA12       |
-|                  Ink screen driver                   |           SPI2           |  PB5  PB8  PB9   |
-|                 library chip driver                  |           SPI2           | PB13  PB14  PB15 |
-|                  Module wake up MCU                  |        General IO        |       PB0        |
-|                  MCUwake up Module                   |        General IO        |       PC13       |
+### Pin configuration
 
-### FAQ
+| Features | **Peripheral interfaces** | **Pins** |
+| :--------: | :--: | :--: |
+| Communication between the MCU and the Zigbee module. | USART2 | PA2 PA3 |
+| Log printing (USB) | USART3 | PB11 PB10 |
+| E-ink display CS | SPI2 | PB1 |
+| Font library module CS | SPI2 | PA12 |
+| E-ink display | SPI2 | PB5  PB8  PB9 |
+| Font library module | SPI2 | PB13  PB14  PB15 |
+| The module wakes up the MCU | GPIO | PB0 |
+| The MCU wakes up the module | GPIO | PC13 |
 
-- **Q：**Development board burning download can not detect the microcontroller
+### FAQs
 
-  **A:** STM32 has two download modes: SW and JTAG. If the hardware download port is connected to the SW port, the software tool Debug download mode should also be selected in SW mode.
+- Q: The board is not detected when I try to download code to it.
 
-- **Q：**The ink screen will leave a residual shadow in the brush, which is also a disadvantage of the brush;
+   A: STM32 enables either an SWD or JTAG protocol to be used on the debug port. You need to choose the correct debug mode in the software based on your hardware connection.
 
-  **A:**The residual shadow can be gradually eliminated by brushing the white screen for many times, but then the picture will gradually become shallower in the second brush, and the light intensity will also have an impact on the shallower local brush time; If the frequency of brush is higher, the color of the picture will be lighter, while if the frequency is lower, the color of the picture will be lighter.
+- Q: Partial refresh results in ghosting on the screen.
 
-- **Q：**MCU as the host, ink screen and font chip as the slave machine to choose, when MCU obtains the character data from the font, it needs to judge whether it is in MISO mode, at this time, compilation error variable definition error;
+   A: You can refresh the e-ink screen to white multiple times to remove the ghost image. After that, partial refresh, light intensity, and high partial refresh rate can also cause the faint display of text or graphics.
 
-  **A:**MISO - Master Input Slave Output: data Input from the Master device and data Output from the Slave device. When MCU is input, the pin should be configured as read input mode. MISO macro definition should be changed
+- Q: I use the MCU as the controller and e-ink display module and font library module as the agents. When the MCU gets character data from the font library module and determines the MISO, I get an error of incorrect variable definition.
+
+   A: If you specify the MCU as the input, you must configure this pin as read. Define the MISO macro as follows.
 
   ```c
-  #define MISO		HAL_GPIO_ReadPin(ZK_SPI2_PORT, ZK_SPI2_MISO_PIN) 
+  #define MISO		HAL_GPIO_ReadPin(ZK_SPI2_PORT, ZK_SPI2_MISO_PIN)
   ```
 
-- **Q：**When the MCU_SDK project was transplanted, doodle module debugging assistant was used to test whether MCU could communicate normally, which could be tested by MCU simulation and module simulation respectively. Module data recovery failed during MCU simulation.
 
-  **A:**During MCU simulation, it is necessary to pay attention to whether the serial port wiring is correct. The serial port is connected to the external MTX and MRX connected to PA2 and PA3, so as to ensure the correct data recovery of the module.
+- Q: When I use the MCU simulation mode in the debugging assistant to verify serial communication, the module response failed.
 
-- **Q：**After the completion of the module network, there will be disconnection, and the network needs to be re-configured.
+   A: In the MCU simulation mode, the serial port must be connected to the external `MTX` and `MRX` that are connected to the `PA2` and `PA3`.
 
-​       **A:**There are several possibilities for the device to display offline:
+- Q: The module is offline after pairing.
 
-​           a:The network is disconnected
+- A: The possible reasons:
 
-​           b:MCU terminal sends the reset command and enters the network configuration mode
+   a: Network downtime.
 
-​          c: After network configuration, MCU does not respond to heartbeat packets within 90 seconds
+   b: The MCU sends a reset command to the module. The module enters pairing mode.
 
-​       When the device is offline, the device can be removed and the network can be re-configured, and   
+   c: The MCU does not respond to the heartbeat within 90 seconds after pairing.
 
-​       the MCU can send the network instruction to re-configure the network.
+   You can remove the paired device from the mobile app and pair it again.
 
-- **Q：**When the module sends DP data, MCU responds after 4~5s;
+- Q: The MCU responds to the module's commands after four to five seconds.
 
-  **A:**There is a poll period value in the ZigBee network policy parameter, which is the wake up period of the low-power module in the network. The poll period of the module is set to 5s. Therefore, after dp is delivered, MCU will wait for one poll period before returning data.
+   A: The polling cycle of the Zigbee module is set to five seconds. Therefore, after the module sends a command, the MCU responds after a polling cycle ends.
 
-- **Q：**When debugging the low-power part of the module, the module could not find data and the device kept restarting.
+- Q: The module does not send data but keeps restarting when I debug the low power feature.
 
-- **A:**There is a poll period value in the ZigBee network policy parameter, which is the wake up period of the low-power module in the network. The poll period of the module is set to 5s. Therefore, after dp is delivered, MCU will wait for one poll period before returning data.
-
-<br>
+   A: The polling cycle of the Zigbee module is set to five seconds. Therefore, after the module sends a command, the MCU responds after a polling cycle ends.
 
 ## Reference
 
-- [ZIGBEE Serial protocol description](https://developer.tuya.com/en/docs/iot/tuya-zigbee-module-uart-communication-protocol?id=K9ear5khsqoty)
-- [ZIGBEE MCU SDK transplant instructions](https://developer.tuya.com/en/docs/iot/mcu-sdk?id=K9ikp5uwm0rb9)
+- [Zigbee serial protocol](https://developer.tuya.com/en/docs/iot/tuya-zigbee-module-uart-communication-protocol?id=K9ear5khsqoty)
+- [Port the MCU SDK](https://developer.tuya.com/en/docs/iot/mcu-sdk?id=K9ikp5uwm0rb9)
 - [Tuya Project Hub](https://developer.tuya.com/demo)
-
-<br>
 
 
 ## Technical support
